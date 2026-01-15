@@ -65,12 +65,31 @@ class ProductRepository {
 
     try {
       final response = await _dio.put('/items/$id', data: {
-        'nama_barang': 'Product Name',
-        'sku': 'Product SKU',
+        // 'nama_barang': 'Mouse Logitech RGB',
+        // 'sku': '123456',
         'stock': newStock,
       });
       if (response.statusCode != 200) {
         throw Exception('failed to update stock: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Product> getProductById(String id) async {
+    if (useMockData) {
+      // Simulasi delay jaringan
+      await Future.delayed(const Duration(seconds: 1));
+      final product = _dummyProducts.firstWhere((p) => p.id == id, orElse: () => throw Exception("Barang dengan ID $id tidak ditemukan."));
+      return product;
+    }
+    try {
+      final response = await _dio.get('/items/$id');
+      if (response.statusCode == 200) {
+        return Product.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load product: ${response.statusCode}');
       }
     } on DioException catch (e) {
       throw _handleError(e);

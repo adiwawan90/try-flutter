@@ -17,3 +17,9 @@ class UpdateProductStock extends ProductEvent {
   @override
   List<Object> get props => [id, newStock];
 }
+
+class GetProductDetail extends ProductEvent {
+  final String id;
+
+  GetProductDetail({required this.id});
+}

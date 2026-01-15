@@ -1,25 +1,43 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stocking_app/common/constants/images.dart';
 import 'package:flutter_stocking_app/data/models/product_model.dart';
+import 'package:flutter_stocking_app/data/repositories/product_repository.dart';
 import '../../logic/blocs/product_bloc.dart';
 import '../../logic/blocs/product_event.dart';
 
 class DetailScreen extends StatefulWidget {
-  final Product product;
-  const DetailScreen({super.key, required this.product});
+  final String productId;
+  final Product? initialData;
+
+  const DetailScreen({
+    super.key,
+    required this.productId,
+    this.initialData,
+  });
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  late Product displayProduct;
+  bool isLoading = false;
   late int currentStock;
 
   @override
+
   void initState() {
     super.initState();
-    currentStock = widget.product.stok;
+    currentStock = widget.initialData?.stok ?? 0;
+    
+    if (widget.initialData != null) {
+      displayProduct = widget.initialData!;
+
+      _fetchFreshData();
+    }
   }
 
   void _updateStock(int value) {
@@ -31,10 +49,28 @@ class _DetailScreenState extends State<DetailScreen> {
     // Panggil API via Bloc
     context.read<ProductBloc>().add(
       UpdateProductStock(
-        id: widget.product.id,
+        id: widget.productId,
         newStock: currentStock,
       ),
     );
+  }
+
+  void _fetchFreshData() {
+    setState(() => isLoading = true);
+
+    context.read<ProductRepository>().getProductById(widget.productId).then((freshProduct) {
+      if (mounted) {
+        setState(() {
+          displayProduct = freshProduct;
+          isLoading = false;
+        });
+      }
+    }).catchError((error) {
+      if (mounted) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Gagal refresh data: $e")));
+      }
+    });
   }
 
   @override
@@ -67,16 +103,16 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     // Pastikan fungsi ini ada di dalam class atau bisa diakses
-                    child: _buildProductImage(widget.product.imageUrl),
+                    child: _buildProductImage(displayProduct.imageUrl),
                   ),
                 ),
               ),
 
               const SizedBox(height: 24),
 
-              Text(widget.product.nama_barang, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(displayProduct.nama_barang, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              Text('SKU: ${widget.product.sku}', style: const TextStyle(fontSize: 16, color: Colors.grey)),
+              Text('SKU: ${displayProduct.sku}', style: const TextStyle(fontSize: 16, color: Colors.grey)),
               
               const SizedBox(height: 32),
 

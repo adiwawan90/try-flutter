@@ -27,3 +27,12 @@ class ProductError extends ProductState {
   @override
   List<Object> get props => [message];
 }
+
+class ProductDetailLoaded extends ProductState {
+  final Product product;
+
+  ProductDetailLoaded(this.product);
+
+  @override
+  List<Object> get props => [product];
+}
