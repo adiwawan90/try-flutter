@@ -37,10 +37,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         // Kita buat object baru karena Bloc butuh immutability
         final updatedProduct = Product(
           id: oldProduct.id,
-          name: oldProduct.name,
-          price: oldProduct.price,
+          nama_barang: oldProduct.nama_barang,
           sku: oldProduct.sku,
-          stock: event.newStock,
+          stok: event.newStock,
         );
 
         currentList[index] = updatedProduct;

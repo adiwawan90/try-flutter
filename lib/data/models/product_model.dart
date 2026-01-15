@@ -1,17 +1,15 @@
 class Product {
   final String id;
-  final String name;
-  final double price;
+  final String nama_barang;
   final String sku;
-  final int stock;
+  final int stok;
   final String? imageUrl;
 
   Product({
     required this.id,
-    required this.name,
-    required this.price,
+    required this.nama_barang,
     required this.sku,
-    required this.stock,
+    required this.stok,
     this.imageUrl,
   });
 
@@ -19,10 +17,9 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'].toString(),
-      name: json['name'] ?? 'No Name',
+      nama_barang: json['nama_barang'] ?? 'No Name',
       sku: json['sku'] ?? '-',
-      stock: int.tryParse(json['stock'].toString()) ?? 0,
-      price: double.tryParse(json['price'].toString()) ?? 0.0,
+      stok: int.tryParse(json['stok'].toString()) ?? 0,
       imageUrl: json['image_url'],
     );
   }
@@ -31,10 +28,9 @@ class Product {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
-      'price': price,
+      'nama_barang': nama_barang,
       'sku': sku,
-      'stock': stock,
+      'stock': stok,
       'image_url': imageUrl,
     };
   }
@@ -42,18 +38,16 @@ class Product {
   // Method copyWith untuk update state lokal sementara (optimistic update)
   Product copyWith({
     String? id,
-    String? name,
-    double? price,
+    String? nama_barang,
     String? sku,
-    int? stock,
+    int? stok,
     String? imageUrl
   }) {
     return Product(
       id: id ?? this.id,
-      name: name ?? this.name,
-      price: price ?? this.price,
+      nama_barang: nama_barang ?? this.nama_barang,
       sku: sku ?? this.sku,
-      stock: stock ?? this.stock,
+      stok: stok ?? this.stok,
       imageUrl: this.imageUrl
     );
   }

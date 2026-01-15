@@ -4,20 +4,19 @@ import '../models/product_model.dart';
 
 class ProductRepository {
   // Opsi: Set ke 'false' jika Backend sudah siap
-  final bool useMockData = true;
+  final bool useMockData = false;
 
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: dotenv.env['BASE_URL'] ?? 'https://api.example.com',
+    baseUrl: dotenv.env['BASE_URL'] ?? 'http://localhost:8080/api',
     connectTimeout: const Duration(seconds: 10),
     receiveTimeout: const Duration(seconds: 10),
   ));
 
   final List<Product> _dummyProducts = [
-    Product(id: '1', name: 'Laptop Gaming ROG', sku: 'LPT-001', stock: 15, price: 1500000, imageUrl: 'assets/images/laptop.jpg'),
-    Product(id: '2', name: 'Mouse Wireless Logitech', sku: 'ACC-023', stock: 3, price: 200000, imageUrl: 'assets/images/mouse.jpg'), // Stok < 5 (Merah)
-    Product(id: '3', name: 'Keyboard Mechanical', sku: 'ACC-055', stock: 8, price: 400000, imageUrl: 'assets/images/keyboard.jpg'),
-    Product(id: '4', name: 'Monitor Samsung 24"', sku: 'MNT-099', stock: 0, price: 1200000, imageUrl: null), // Stok Habis
-    Product(id: '5', name: 'USB Hub Baseus', sku: 'ACC-102', stock: 4, price: 150000, imageUrl: null), // Stok < 5 (Merah)
+    Product(id: '1', nama_barang: 'Laptop Gaming ROG', sku: 'LPT-001', stok: 15, imageUrl: 'assets/images/laptop.jpg'),
+    Product(id: '2', nama_barang: 'Mouse Wireless Logitech', sku: 'ACC-023', stok: 3, imageUrl: 'assets/images/mouse.jpg'), // Stok < 5 (Merah)
+    Product(id: '3', nama_barang: 'Keyboard Mechanical', sku: 'ACC-055', stok: 8, imageUrl: 'assets/images/keyboard.jpg'),
+    Product(id: '4', nama_barang: 'Monitor Samsung 24"', sku: 'MNT-099', stok: 0, imageUrl: null), // Stok Habis
   ];
 
   Future<List<Product>> getProducts() async {
@@ -28,7 +27,7 @@ class ProductRepository {
       return List<Product>.from(_dummyProducts);
     }
     try {
-      final response = await _dio.get('/products');
+      final response = await _dio.get('/items');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data;
         return data.map((json) => Product.fromJson(json)).toList();
@@ -47,16 +46,15 @@ class ProductRepository {
       // Update dummy data lokal
       final index = _dummyProducts.indexWhere((p) => p.id == id);
       if (index != -1) {
-        _dummyProducts[index] = _dummyProducts[index].copyWith(stock: newStock);
+        _dummyProducts[index] = _dummyProducts[index].copyWith(stok: newStock);
         // Update data di memori agar saat kembali ke Home, angkanya berubah
         // Kita buat object baru karena field Product biasanya final
         Product oldData = _dummyProducts[index];
         _dummyProducts[index] = Product(
           id: oldData.id,
-          name: oldData.name,
+          nama_barang: oldData.nama_barang,
           sku: oldData.sku,
-          price: oldData.price,
-          stock: newStock,
+          stok: newStock,
           imageUrl: oldData.imageUrl,
         );
       }else {
@@ -66,7 +64,9 @@ class ProductRepository {
     }
 
     try {
-      final response = await _dio.put('/products/update/$id', data: {
+      final response = await _dio.put('/items/$id', data: {
+        'nama_barang': 'Product Name',
+        'sku': 'Product SKU',
         'stock': newStock,
       });
       if (response.statusCode != 200) {

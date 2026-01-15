@@ -19,7 +19,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    currentStock = widget.product.stock;
+    currentStock = widget.product.stok;
   }
 
   void _updateStock(int value) {
@@ -74,7 +74,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
               const SizedBox(height: 24),
 
-              Text(widget.product.name, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(widget.product.nama_barang, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Text('SKU: ${widget.product.sku}', style: const TextStyle(fontSize: 16, color: Colors.grey)),
               

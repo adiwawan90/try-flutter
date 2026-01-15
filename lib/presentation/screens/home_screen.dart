@@ -32,13 +32,13 @@ class HomeScreen extends StatelessWidget {
                 itemCount: state.products.length,
                 itemBuilder: (context, index) {
                   final product = state.products[index];
-                  final isLowStock = product.stock < 5;
-
+                  final isLowStock = product.stok < 5;
+                  
                   return ListTile(
-                    title: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    title: Text(product.nama_barang, style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text('SKU: ${product.sku}'),
                     trailing: Text(
-                      'Stok: ${product.stock}',
+                      'Stok: ${product.stok}',
                       style: TextStyle(
                         color: isLowStock ? Colors.red : Colors.black,
                         fontWeight: isLowStock ? FontWeight.bold : FontWeight.normal,
